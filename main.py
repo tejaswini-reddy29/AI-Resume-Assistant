@@ -1,52 +1,23 @@
-from openai import OpenAI
-from dotenv import load_dotenv
-import os
+import requests
 
-load_dotenv()
+def ask_ai(prompt):
+    try:
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "llama3",
+                "prompt": prompt,
+                "stream": False
+            },
+            timeout=120
+        )
+        return response.json()["response"]
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    except Exception as e:
+        return f"Error: {e}"
 
-try:
-    with open("resume.txt", "r", encoding="utf-8") as f:
-        resume = f.read()
 
-    with open("job_description.txt", "r", encoding="utf-8") as f:
-        job = f.read()
-
-    prompt = f"""
-You are a professional recruiter.
-
-TASK:
-Improve resume based on job description.
-
-RESUME:
-{resume}
-
-JOB DESCRIPTION:
-{job}
-
-OUTPUT:
-1. ATS Score
-2. Missing Skills
-3. Improved Resume
-"""
-
-    response = client.responses.create(
-        model="gpt-4.1-mini",
-        input=prompt
-    )
-
-    output = response.output_text
-
-    print(output)
-
-    with open("improved_resume.txt", "w", encoding="utf-8") as f:
-        f.write(output)
-
-    print("Success: Resume improved!")
-
-except FileNotFoundError as e:
-    print("Error: Missing file -", e)
-
-except Exception as e:
-    print("Something went wrong:", e)
+# TEST RUN ONLY
+if __name__ == "__main__":
+    result = ask_ai("Write a resume summary for a Python developer")
+    print(result)
