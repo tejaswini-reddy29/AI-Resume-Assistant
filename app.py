@@ -12,38 +12,30 @@ def ask_ai(prompt):
         },
         timeout=120
     )
-
     return response.json()["response"]
 
 
 st.title("🤖 AI Resume Assistant")
 
+# Inputs
 job_role = st.text_input("Target Job Role")
-
 name = st.text_input("Full Name")
-
 education = st.text_area("Education")
-
 experience = st.text_area("Work Experience")
-
 skills = st.text_area("Current Skills")
-
 projects = st.text_area("Projects")
-
 achievements = st.text_area("Achievements")
 
-if st.button("Generate Resume Summary"):
+# SINGLE BUTTON ONLY
+if st.button("Generate Resume"):
 
- prompt = f"""
+    prompt = f"""
 Create a professional ATS-friendly resume.
 
 Candidate Details
 
-Name:
-{name}
-
-Target Job Role:
-{job_role}
+Name: {name}
+Target Job Role: {job_role}
 
 Education:
 {education}
@@ -51,7 +43,7 @@ Education:
 Work Experience:
 {experience}
 
-Current Skills:
+Skills:
 {skills}
 
 Projects:
@@ -63,33 +55,28 @@ Achievements:
 Generate the resume with the following sections:
 
 1. Professional Summary
-
 2. Work Experience
-
 3. Skills
-
 4. Soft Skills
-
 5. Technical Skills
-
 6. Achievements
-
 7. Projects
 
-Write professionally using bullet points.
-Do not invent information that wasn't provided.
-Improve the wording of the provided information.
+Rules:
+- Do NOT invent information
+- Improve wording
+- Use bullet points
+- Make it ATS-friendly
 """
-if st.button("Generate Resume"):
+
     result = ask_ai(prompt)
 
     st.subheader("Generated Resume")
-
     st.write(result)
 
-st.download_button(
-    label="Download Summary",
-    data=result,
-    file_name="resume_summary.txt",
-    mime="text/plain"
-)
+    st.download_button(
+        label="Download Resume",
+        data=result,
+        file_name="resume.txt",
+        mime="text/plain"
+    )
